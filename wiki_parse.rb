@@ -6,12 +6,12 @@
 
 require 'mechanize'
 
-
+# A WikiPage instance is instantiated from an input of characters. These characters, or
+# some slight variation of the input should direct our user to a valid wiki
 class WikiPage
-  def initialize(k)
-    @pageData = getPage(k)
+  def initialize(characters)
+    @pageData = getPage(characters)
     @seen     = false
-    puts @pageData.body
   end
 
   # description - Retrieve the page data for a given wiki
@@ -27,20 +27,24 @@ class WikiPage
     return mechPage.get(url)
   end
 
-  #Retrieves references to the wikis located within a specific wiki's page
+  # description - Retrieves references to the wikis located within a WikiPage. 
+  # If no connections exist, returns an empty array
+  # returns [array] Array of connected wiki pages(by String name)
   def connections
     return []
   end
 
+  # description - Determine whether this page has been seen before
+  # returns [bool]
   def seen
     return @seen
   end 
 
+  #description - Mark a page as seen/unseen
+  #parameters  - [bool] isSeen
   def setSeen(isSeen)
     @seen = isSeen
   end
-
-
 end
 
 class Runner
@@ -55,9 +59,8 @@ class Runner
   	wordIn = gets.chomp
   end
 
-
-
   #description - Run a BFS search from a given starting point until the end point is reached
+  #returns [void]
   def run
 
     #Create new queue
@@ -93,11 +96,5 @@ class Runner
   end
 end
 
-
 r = Runner.new
 r.run
-
-
-#Display any anchor link that contains the keywork /wiki/
-#page.links_with(href: /wiki/).each do |link|
-#	puts link.href
