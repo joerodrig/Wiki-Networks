@@ -73,14 +73,15 @@ end
 class Runner
   def initialize
   	@startingPoint = ARGV[0]
-  	@endingPoint   = ARGV[1]
-    puts "Checking path from #{@startingPoint} --> #{@endingPoint}"
-  end
+    
+    # Copy the endingPoint argument and format it to remove
+    # any spaces and special characters. This helps us better compare
+    # the results returned in the BFS to see if an exact match is made
+    ep  = ARGV[1].dup
+    ep.gsub!(/[!@&_ "]/,'')
+  	@endingPoint   = ep
 
-  def keywordInput(msg)
-  	puts msg
-  	wordIn = gets.chomp
-    return wordIn
+    puts "Checking path from #{@startingPoint} --> #{@endingPoint}"
   end
 
   #description - Run a BFS search from a given starting point until the end point is reached
@@ -107,14 +108,21 @@ class Runner
       currentWiki.connections.each do |connectedWiki| 
         #Get page data of the connected Wiki
         nextWiki = WikiPage.new(connectedWiki["title"])
-        puts "#{currentWiki.name} -> #{nextWiki.name}"
+        
         #add a link from current wiki to connectedWiki
         #TODO: Decide on data structure to manage this
-      
-        if nextWiki.name == @endingPoint
+        
+        #Extract a copy of the name of the connected wiki and normalize it
+        nextWikiNameNormalized = nextWiki.name.dup
+        nextWikiNameNormalized.gsub!(/[!@&_ "]/,'')
+        
+        #Compare the normalized wiki name vs. our end point
+        if @endingPoint.casecmp(nextWikiNameNormalized) == 0
           puts "Found #{@endingPoint}!"
           exit(0)
         end
+
+        puts "#{currentWiki.name} -> #{nextWikiNameNormalized} : #{@endingPoint}"
 
         #If connectedWiki hasn't been seen yet
         if nextWiki.seen == false
@@ -122,7 +130,6 @@ class Runner
           #Enqueue connected wiki and mark as seen
           q.push(nextWiki)
           nextWiki.setSeen(true)
-          puts nextWiki.connections
           puts "Queue at: #{q.length}"
         end
       end
