@@ -35,7 +35,7 @@ class WikiPage
            'action=query&'\
            'titles='+param+'&'\
            'prop=links&'\
-           'pllimit=25&'\ 
+           'pllimit=25&'\
            'redirects'\
 
     mechPage  = Mechanize.new
@@ -72,12 +72,12 @@ end
 
 class Runner
   def initialize
-  	@startingPoint = getKeywordInput('Enter a starting point:')
-  	@endingPoint   = getKeywordInput('Enter an ending point:')
+  	@startingPoint = ARGV[0]
+  	@endingPoint   = ARGV[1]
     puts "Checking path from #{@startingPoint} --> #{@endingPoint}"
   end
 
-  def getKeywordInput(msg)
+  def keywordInput(msg)
   	puts msg
   	wordIn = gets.chomp
     return wordIn
