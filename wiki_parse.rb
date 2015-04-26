@@ -12,6 +12,9 @@ require 'json'
 class WikiPage
   def initialize(characters)
     page = getPage(characters)
+
+    # Retrieve the page title and referenced URLS
+    # Note: This loop is a workaround to the pageID being unknown initially
     page.each do |pageID,rest|
       @name        = page[pageID]['title']
       @connections = page[pageID]['links'] || []
@@ -54,9 +57,12 @@ class WikiPage
     return @seen
   end 
 
+  # description - Retieve the name of a wiki
+  # returns [String]
   def name
     return @name
   end
+
   # description - Mark a page as seen/unseen
   # parameters  - [bool] isSeen
   def setSeen(isSeen)
@@ -123,7 +129,6 @@ class Runner
     end
   end
 end
-
 
 r = Runner.new
 r.run
