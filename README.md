@@ -5,7 +5,7 @@
 
 
 <h1>How to Run</h1>
-<p> ruby lib/wikiParse.rb {FROM} -> {TO} </p>
+<p> ruby lib/wikiParse.rb {FROM} {TO} </p>
 <p> From = Starting point </p>
 <p> To   = Ending point </p>
 
