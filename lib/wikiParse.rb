@@ -13,13 +13,9 @@ class WikiPage
   def initialize(characters)
     page = getPage(characters)
 
-    # Retrieve the page title and referenced URLS
-    # Note: This loop is a workaround to the pageID being unknown initially
-    page.each do |pageID,rest|
-      @name        = page[pageID]['title']
-      @connections = page[pageID]['links'] || []
-    end
-
+    # Retrieve the page title and the wikis which reference it
+    @name = characters
+    @connections = page["backlinks"]
     @seen = false
   end
 
@@ -32,16 +28,17 @@ class WikiPage
   def getPage(param)
     url = 'http://en.wikipedia.org/w/api.php?' \
            'format=json&'\
+           'list=backlinks&'\
            'action=query&'\
-           'titles='+param+'&'\
-           'prop=links&'\
-           'pllimit=25&'\
-           'redirects'\
+           'bltitle='+param+'&'\
+           'redirects&'\
+           'blfilterredir=all&'\
+           'bllimit=max'
 
     mechPage  = Mechanize.new
     pageData  = mechPage.get(url)
     jsonPage  = JSON.parse(pageData.body)
-    return jsonPage["query"]["pages"] 
+    return jsonPage["query"]
   end
 
   # description - Retrieves references to the wikis located within a WikiPage. 
@@ -91,46 +88,54 @@ class Runner
     #Create new queue
     q = Queue.new
 
-    #sPoint will contain the wiki data instance given as a starting point
-    sPoint = WikiPage.new(@startingPoint)
+    #ePoint will contain the wiki data instance given as an ending point
+    ePoint = WikiPage.new(@endingPoint)
 
     #enqueue the starting point and mark as seen
-    q.push(sPoint)
-    sPoint.setSeen(true)
+    q.push(ePoint)
+    ePoint.setSeen(true)
     
     #Run while loop while q isn't empty
     while !q.empty? do
       
+      wikiCount = 0
+
       #Extract next wiki from queue
       currentWiki = q.pop
 
-      #For each wiki located within the current wiki
-      currentWiki.connections.each do |connectedWiki| 
-        #Get page data of the connected Wiki
-        nextWiki = WikiPage.new(connectedWiki["title"])
+      #For each wiki that refers to the current wiki (backlink)
+      currentWiki.connections.each do |referingWiki| 
+
+
+        next if referingWiki["title"].include? "User:" || "Talk:" || "User talk:"
+
+        #Get page data of the refering Wiki
+        nextWiki = WikiPage.new(referingWiki["title"])
         
-        #add a link from current wiki to connectedWiki
+        #add a link from referingWiki to current wiki
         #TODO: Decide on data structure to manage this
         
-        #Extract a copy of the name of the connected wiki and normalize it
+        #Extract a copy of the name of the refering wiki and normalize it
         nextWikiNameNormalized = nextWiki.name.dup
-        nextWikiNameNormalized.gsub!(/[!@&_ "]/,'')
+        nextWikiNameNormalized.gsub!(/[!@&_ .\:\-\/"]/,'')
         
-        #Compare the normalized wiki name vs. our end point
-        if @endingPoint.casecmp(nextWikiNameNormalized) == 0
-          puts "Found #{@endingPoint}!"
+        #See if normalized wiki name matches our start point
+        if @startingPoint.casecmp(nextWikiNameNormalized) == 0
+          puts "Found #{@startingPoint}!"
+          puts "Wikis searched through: #{wikiCount}"
+          puts "Queue was at size: #{q.length}"
           exit(0)
         end
 
-        puts "#{currentWiki.name} -> #{nextWikiNameNormalized} : #{@endingPoint}"
+        puts "#{currentWiki.name} -- #{nextWikiNameNormalized};"
 
         #If connectedWiki hasn't been seen yet
         if nextWiki.seen == false
 
           #Enqueue connected wiki and mark as seen
           q.push(nextWiki)
+          wikiCount += 1
           nextWiki.setSeen(true)
-          puts "Queue at: #{q.length}"
         end
       end
     end
