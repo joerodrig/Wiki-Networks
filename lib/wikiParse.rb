@@ -32,7 +32,7 @@ class WikiPage
            'bltitle='+param+'&'\
            'redirects&'\
            'blfilterredir=all&'\
-           'bllimit=max'
+           'bllimit=20'
 
     mechPage  = Mechanize.new
     pageData  = mechPage.get(url)
@@ -120,8 +120,13 @@ class Runner
         nextWikiNameNormalized.gsub!(/[!@&_ .\:\-\/"]/,'_')
         
         #OUTPUT Connection
-        puts "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\";"
-
+        if @stepsOut == ARGV[0].to_i
+          puts "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\"[color=blue];"
+        elsif @stepsOut == 1
+           puts "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\"[color=red];"
+        else
+           puts "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\";"
+        end
         if !nextWiki.seen
 
           #Enqueue connected wiki and mark as seen
