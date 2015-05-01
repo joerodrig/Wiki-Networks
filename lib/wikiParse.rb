@@ -22,9 +22,8 @@ class WikiPage
 
 
   # description - Retrieve the page data for a given wiki
-  # TODO: Need error checking(page missing, checking for variations of title)
-  # Also note that pllimit is a hard limit on how many URLs are taken from
-  # any particular page. The limit for bots is 500 and can be set as 'max'
+  # Note that bllimit is a hard limit on how many URLs are taken from
+  # any particular page. The limit for bots is 500 (set as 'max')
   def getPage(param)
     url = 'http://en.wikipedia.org/w/api.php?' \
            'format=json&'\
@@ -69,73 +68,73 @@ end
 
 class Runner
   def initialize
-  	@startingPoint = ARGV[0]
+  	@stepsOut = ARGV[0].to_i
     
     # Copy the endingPoint argument and format it to remove
     # any spaces and special characters. This helps us better compare
     # the results returned in the BFS to see if an exact match is made
     ep  = ARGV[1].dup
-    ep.gsub!(/[!@&_ "]/,'')
+    ep.gsub!(/[!@&_ .\:\-\/"]/,'_')
   	@endingPoint   = ep
-
-    puts "Checking path from #{@startingPoint} --> #{@endingPoint}"
   end
 
   #description - Run a BFS search from a given starting point until the end point is reached
   #returns [void]
   def run
 
-    #Create new queue
+    # Create new queue
     q = Queue.new
+
+    # Tracker Queue
+    tracker = Queue.new
 
     #ePoint will contain the wiki data instance given as an ending point
     ePoint = WikiPage.new(@endingPoint)
 
-    #enqueue the starting point and mark as seen
+    #Enqueue the starting point and mark as seen
     q.push(ePoint)
+
+    #Enqueue an item in the tracker
+    tracker.push(1)
+
     ePoint.setSeen(true)
     
     #Run while loop while q isn't empty
-    while !q.empty? do
-      
-      wikiCount = 0
+    while !q.empty? && @stepsOut != 0 do
 
       #Extract next wiki from queue
       currentWiki = q.pop
+      tracker.pop 
+
 
       #For each wiki that refers to the current wiki (backlink)
       currentWiki.connections.each do |referingWiki| 
 
-
-        next if referingWiki["title"].include? "User:" || "Talk:" || "User talk:"
+        next if referingWiki["title"].include? "User:" || "Talk:" || "User talk:" || "Wikipedia:"
 
         #Get page data of the refering Wiki
         nextWiki = WikiPage.new(referingWiki["title"])
         
-        #add a link from referingWiki to current wiki
-        #TODO: Decide on data structure to manage this
-        
         #Extract a copy of the name of the refering wiki and normalize it
         nextWikiNameNormalized = nextWiki.name.dup
-        nextWikiNameNormalized.gsub!(/[!@&_ .\:\-\/"]/,'')
+        nextWikiNameNormalized.gsub!(/[!@&_ .\:\-\/"]/,'_')
         
-        #See if normalized wiki name matches our start point
-        if @startingPoint.casecmp(nextWikiNameNormalized) == 0
-          puts "Found #{@startingPoint}!"
-          puts "Wikis searched through: #{wikiCount}"
-          puts "Queue was at size: #{q.length}"
-          exit(0)
-        end
+        #OUTPUT Connection
+        puts "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\";"
 
-        puts "#{currentWiki.name} -- #{nextWikiNameNormalized};"
-
-        #If connectedWiki hasn't been seen yet
-        if nextWiki.seen == false
+        if !nextWiki.seen
 
           #Enqueue connected wiki and mark as seen
           q.push(nextWiki)
-          wikiCount += 1
           nextWiki.setSeen(true)
+        end
+      end
+
+      # Increment tracker
+      if tracker.length() == 0 
+        @stepsOut -= 1
+        while tracker.length() < q.length()
+          tracker.push(1)
         end
       end
     end
