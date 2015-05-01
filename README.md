@@ -1,13 +1,13 @@
 <h1>Summary</h1>
-<p>Wikipedia contains highly interconnected networks of information. Using Ruby and the Wikipedia API, we can allow a user to enter arbitrary starting and ending points and count the amount of “hops” it takes for us to go from start → end between wiki articles</p>
-
-<p>Our ultimate goal is to port this system into a Web-Application using Ruby-On-Rails as our web framework and using a graph library such as D3 or ngraph, visualize the paths taken from Start -> End of our scraper. </p>
-
+<p>Wikipedia contains highly interconnected networks of information. Using Ruby and the Wikipedia API, users can build a network of interrelated wiki pages based off of some arbitrary starting wiki.</p>
 
 <h1>How to Run</h1>
-<p> ruby lib/wikiParse.rb {FROM} {TO} </p>
-<p> From = Starting point </p>
-<p> To   = Ending point </p>
+```ruby lib/wikiParse.rb {iterations} {root_wikipage}  > output.dot```
+<p> iterations  -->  The iterations parameter tells the system how far off it should
+commit to the BFS from the root wiki. For example, if the iterations parameter is set to two,
+the BFS will end after parsing each wiki that is no more than two hops away from the root wiki</p>
+<p> root_wikipage  = Starting wikipage. </p>
+
 
 <h1> Dependencies </h1>
 <ul>
