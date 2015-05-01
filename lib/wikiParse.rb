@@ -68,14 +68,20 @@ end
 
 class Runner
   def initialize
-  	@stepsOut = ARGV[0].to_i
+  	@stepsOut = ARGV[0].to_i || 0
     
     # Copy the endingPoint argument and format it to remove
     # any spaces and special characters. This helps us better compare
     # the results returned in the BFS to see if an exact match is made
-    ep  = ARGV[1].dup
-    ep.gsub!(/[!@&_ .\:\-\/"]/,'_')
-  	@endingPoint   = ep
+    # If no point was entered, exit the program
+    if ARGV[1] != nil
+      ep  = ARGV[1].dup || nil
+      ep.gsub!(/[!@&_ .\:\-\/"]/,'_')
+      @endingPoint   = ep
+    else 
+      exit(0) 	
+    end
+    
   end
 
   #description - Run a BFS search from a given starting point until the end point is reached
