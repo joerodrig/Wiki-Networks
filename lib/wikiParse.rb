@@ -131,7 +131,7 @@ class Runner
         elsif @stepsOut == 1
            puts "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\"[color=red];"
         else
-           puts "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\";"
+           puts "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\"[color=black];"
         end
         if !nextWiki.seen
 
