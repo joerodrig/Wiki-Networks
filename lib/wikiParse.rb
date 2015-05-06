@@ -19,10 +19,8 @@ class WikiPage
     @seen = false
   end
 
-
-
   # description - Retrieve the page data for a given wiki
-  # Note that bllimit is a hard limit on how many URLs are taken from
+  # Note that 'bllimit' is a hard limit on how many URLs are taken from
   # any particular page. The limit for bots is 500 (set as 'max')
   def getPage(param)
     url = 'http://en.wikipedia.org/w/api.php?' \
@@ -77,14 +75,24 @@ class Runner
     if ARGV[1] != nil
       ep  = ARGV[1].dup || nil
       ep.gsub!(/[!@&_ .\:\-\/"]/,'_')
-      @endingPoint   = ep
+      @startingPoint   = ep
     else 
       exit(0) 	
     end
+
+    # Specify the maximum number of points
+    # if no maximum number is specified, the 
+    # parse will continue until
+    if ARGV[2] != nil
+      maxPointsIn = ARGV[2].dup.to_i
+      @pointsLeftToSearch  = maxPointsIn
+    end
+
     
   end
 
-  #description - Run a BFS search from a given starting point until the end point is reached
+  #description - Run a BFS search from a given starting point until
+  # the specified limit is reached
   #returns [void]
   def run
 
@@ -94,24 +102,23 @@ class Runner
     # Tracker Queue
     tracker = Queue.new
 
-    #ePoint will contain the wiki data instance given as an ending point
-    ePoint = WikiPage.new(@endingPoint)
+    #sPoint will contain the wiki data instance given as a starting point
+    sPoint = WikiPage.new(@startingPoint)
 
     #Enqueue the starting point and mark as seen
-    q.push(ePoint)
+    q.push(sPoint)
 
     #Enqueue an item in the tracker
     tracker.push(1)
 
-    ePoint.setSeen(true)
+    sPoint.setSeen(true)
     
     #Run while loop while q isn't empty
-    while !q.empty? && @stepsOut != 0 do
-
+    while !q.empty? && @stepOut != 0 && @pointsLeftToSearch != 0 do
       #Extract next wiki from queue
       currentWiki = q.pop
-      tracker.pop 
-
+      tracker.pop
+      if @pointsLeftToSearch != nil then @pointsLeftToSearch -= 1 end
 
       #For each wiki that refers to the current wiki (backlink)
       currentWiki.connections.each do |referingWiki| 
@@ -126,13 +133,20 @@ class Runner
         nextWikiNameNormalized.gsub!(/[!@&_ .\:\-\/"]/,'_')
         
         #OUTPUT Connection
+        wikiOutput = "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\""
+        
+        #edge is blue if starting point -> next point
         if @stepsOut == ARGV[0].to_i
-          puts "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\"[color=blue];"
+          wikiOutput += "[color=blue];"
+        #edge is red from second to last point -> last point
         elsif @stepsOut == 1
-           puts "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\"[color=red];"
+           wikiOutput += "[color=red];"
+        #edge is black otherwise
         else
-           puts "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\"[color=black];"
+           wikiOutput += "[color=black];"
         end
+        puts wikiOutput
+
         if !nextWiki.seen
 
           #Enqueue connected wiki and mark as seen
