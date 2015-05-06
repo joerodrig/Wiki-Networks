@@ -86,9 +86,7 @@ class Runner
     if ARGV[2] != nil
       maxPointsIn = ARGV[2].dup.to_i
       @pointsLeftToSearch  = maxPointsIn
-    end
-
-    
+    end    
   end
 
   #description - Run a BFS search from a given starting point until
@@ -114,7 +112,7 @@ class Runner
     sPoint.setSeen(true)
     
     #Run while loop while q isn't empty
-    while !q.empty? && @stepOut != 0 && @pointsLeftToSearch != 0 do
+    while !q.empty? && @stepsOut != 0 && @pointsLeftToSearch != 0 do
       #Extract next wiki from queue
       currentWiki = q.pop
       tracker.pop
