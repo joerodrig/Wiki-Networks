@@ -3,15 +3,15 @@
 
 <h1>How to Run</h1>
 
-<p>Out put to a GraphViz compatible file: </p>
+<p>Output to a GraphViz compatible file: </p>
 ```ruby lib/wikiParse.rb {iterations} {rootWikipage} {pointsToSearch}  > output.dot```
 <ul>
 
-<li>iterations  -->  The iterations parameter tells the system how far off it should
+<li><b>iterations</b>  -->  The iterations parameter tells the system how far off it should
 commit to the BFS from the root wiki. For example, if the iterations parameter is set to two,
 the BFS will end after parsing each wiki that is no more than two hops away from the root wiki</li>
-<li>rootWikipage  --> Starting wikipage. </li>
-<li> pointsToSearch --> Optional parameter. Stops the BFS if the number of points to search is reached
+<li><b>rootWikipage</b>  --> Starting wikipage. </li>
+<li><b>pointsToSearch</b> --> Optional parameter. Stops the BFS if the number of points to search is reached
 </li>
 </ul>
 
