@@ -134,15 +134,15 @@ class Runner
         wikiOutput = "\"#{currentWiki.name}\" -- \"#{nextWikiNameNormalized}\""
         
         #edge is blue if starting point -> next point
-        if @stepsOut == ARGV[0].to_i
-          wikiOutput += "[color=blue];"
+        #if @stepsOut == ARGV[0].to_i
+        #  wikiOutput += "[color=blue];"
         #edge is red from second to last point -> last point
-        elsif @stepsOut == 1
-           wikiOutput += "[color=red];"
+        #elsif @stepsOut == 1
+        #   wikiOutput += "[color=red];"
         #edge is black otherwise
-        else
-           wikiOutput += "[color=black];"
-        end
+        #else
+        #   wikiOutput += "[color=black];"
+        #end
         puts wikiOutput
 
         if !nextWiki.seen
