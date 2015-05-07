@@ -41,12 +41,16 @@ end
 
 #split_line_array will be the array produced when line is split in line_strip
 def hash_to_json(json_hash)
+	puts "{"
 	json_hash.each do |key, array|
+		print '"'
 		print key
+		print '"'
 		print ": "
 		print array
 		puts
 	end
+	puts "}"
 end
 
 read_file("../examples/ithaca/ithaca_20connections_5nested.dot")
