@@ -15,6 +15,14 @@ the BFS will end after parsing each wiki that is no more than two hops away from
 </li>
 </ul>
 
+<p>Parse GraphViz compatible file into JSON File: </p>
+```ruby lib/file_to_json.rb {filePath} > jfile.json```
+<ul>
+
+<li><b>filePath</b> --> The filePath parameter tells the system how to access the .dot file to be
+converted into a json file.</li>
+</ul>
+
 <h1> Dependencies </h1>
 <ul>
 <li>rSpec</li>

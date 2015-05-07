@@ -53,4 +53,4 @@ def hash_to_json(json_hash)
 	puts "}"
 end
 
-read_file("../examples/ithaca/ithaca_20connections_5nested.dot")
+read_file(ARGV[0])
