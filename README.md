@@ -3,7 +3,7 @@
 
 <h1>How to Run</h1>
 
-<p>Output to a GraphViz compatible file: </p>
+<p><b>Output to a GraphViz compatible file: </b></p>
 ```ruby lib/wikiParse.rb {iterations} {rootWikipage} {pointsToSearch}  > output.dot```
 <ul>
 
@@ -15,7 +15,8 @@ the BFS will end after parsing each wiki that is no more than two hops away from
 </li>
 </ul>
 
-<p>Parse GraphViz compatible file into JSON File: </p>
+
+<p><b>Parse GraphViz compatible file into JSON File:</b></p>
 ```ruby lib/file_to_json.rb {filePath} > jfile.json```
 <ul>
 
@@ -23,6 +24,15 @@ the BFS will end after parsing each wiki that is no more than two hops away from
 converted into a json file.</li>
 </ul>
 
+<h1>Running the Visualizations in Graphviz </h1>
+<p> To run the visualizations you need GraphViz to compile and display the networks</p>
+<p> GraphViz can be installed <a href="http://www.graphviz.org/">here</a></p>
+
+<p> Once you have GraphViz installed, to compile the network, enter:</p>
+```neato -Tps <DOT_FILE_HERE>.dot -o <OUTPUT_NAME_HERE>.ps```
+
+<p> Once the visual finishes compiling, enter: </p>
+```open <OUTPUT_NAME_HERE>.ps```
 <h1> Dependencies </h1>
 <ul>
 <li>rSpec</li>
