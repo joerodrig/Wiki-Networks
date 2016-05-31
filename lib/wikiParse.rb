@@ -35,26 +35,27 @@ class WikiPage
     mechPage  = Mechanize.new
     pageData  = mechPage.get(url)
     jsonPage  = JSON.parse(pageData.body)
-    return jsonPage["query"]
+    
+    jsonPage["query"]
   end
 
   # description - Retrieves references to the wikis located within a WikiPage. 
   # If no connections exist, returns an empty array
   # returns [array] Array of connected wiki pages(by String name)
   def connections
-    return @connections
+    @connections
   end
 
   # description - Determine whether this page has been seen before
   # returns [bool]
   def seen
-    return @seen
+    @seen
   end 
 
   # description - Retieve the name of a wiki
   # returns [String]
   def name
-    return @name
+    @name
   end
 
   # description - Mark a page as seen/unseen
